@@ -20,7 +20,7 @@ describe('stapi routes', () => {
 
   it('creates stapi object', async () => {
       const character = { name: 'Captian Kirk', species: 'Human', faction: 'Starfleet'};
-      const res = await request(app).post('/api/v1/stapi').send(character);
+      const res = await request(app).post('/api/v1/trek_characters').send(character);
 
       expect(res.body).toEqual({
         id: '1',
