@@ -2,6 +2,7 @@ import pool from '../lib/utils/pool.js';
 import setup from '../data/setup.js';
 import request from 'supertest';
 import app from '../lib/app.js';
+import TREK from '../lib/models/stapi-model.js';
 
 
 // CRUD
@@ -18,9 +19,9 @@ describe('stapi routes', () => {
     return setup(pool);
   });
 
-  it('creates stapi object', async () => {
+  it('creates a character', async () => {
       const character = { name: 'Captian Kirk', species: 'Human', faction: 'Starfleet'};
-      const res = await request(app).post('/api/v1/stapi').send(character);
+      const res = await request(app).post('/api/v1/trek_characters').send(character);
 
       expect(res.body).toEqual({
         id: '1',
@@ -28,6 +29,73 @@ describe('stapi routes', () => {
       })
   });
 
+  it('gets character by id', async () => {
+    const character = await TREK.insert({
+      name: 'Captain Kirk',
+      species: 'Human',
+      faction: 'Starfleet',
+    });
+
+    const res = await request(app).get(`/api/v1/trek_characters/${character.id}`);
+
+    expect(res.body).toEqual(character);
+  });
+
+  it('gets all characters', async () => {
+    const kirk = await TREK.insert({
+      name: 'Captian Kirk',
+      species: "Human",
+      faction: 'Starfleet',
+    })
+
+    const shran = await TREK.insert({
+      name: 'Shran',
+      species: 'Andorian',
+      faction: 'Andorian Imprial Guard',
+    })
+
+    const morn = await TREK.insert({
+      name: 'Morn',
+      species: 'Lurian', 
+      faction: 'smuggler',
+    })
+
+    return request(app)
+    .get(`/api/v1/trek_characters`)
+    .then((res) => {
+      expect(res.body).toEqual([ kirk, shran, morn ]);
+
+    })
+
+  });
+
+  it('updates a character by ID', async () => {
+      const character = await TREK.insert({
+        name: 'Captain Picard',
+        species: 'Human',
+        faction: 'Starfleet',
+      })
+
+      const res = await request(app)
+        .put(`/api/v1/trek_characters/${character.id}`)
+        .send({ faction: 'retired' });
+
+        expect(res.body).toEqual({ name:'Captain Picard', species: 'Human', faction: 'retired', id: '1' });
+  })
+
+  it('deletes a character by ID', async () => {
+    const character = await TREK.insert({
+      name: 'General Martok',
+      species: 'Klingon', 
+      faction: 'Klingon Empire',
+    })
+
+    const res = await request(app).delete(`/api/v1/trek_characters/${character.id}`);
+
+    expect(res.body).toEqual({
+      message: `${character.name} has been removed.`
+    });
+  })
 
 }); // <--- END PARENT CODE BLOCK
 

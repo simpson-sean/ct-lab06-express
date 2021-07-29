@@ -1,11 +1,11 @@
 {
-  "name": "ct-lab06-express",
+  "name": "ct-lab07-express",
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
   "type": "module",
   "scripts": {
-    "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --verbose --runInBand --testLocationInResults --setupFiles dotenv/config",
+    "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --verbose --runInBand --detectOpenHandles --testLocationInResults --setupFiles  dotenv/config",
     "test:watch": "npm run test -- --watch",
     "start": "node -r dotenv/config server.js",
     "start:watch": "nodemon -r dotenv/config server.js",
@@ -33,6 +33,7 @@
     "cross-env": "^7.0.3",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
-    "pg": "^8.7.1"
+    "pg": "^8.7.1",
+    "superagent": "^6.1.0"
   }
 }
