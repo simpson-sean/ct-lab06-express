@@ -64,9 +64,23 @@ describe('stapi routes', () => {
     .get(`/api/v1/trek_characters`)
     .then((res) => {
       expect(res.body).toEqual([ kirk, shran, morn ]);
-      
+
     })
 
+  });
+
+  it('updates a character by ID', async () => {
+      const character = await TREK.insert({
+        name: 'Captain Picard',
+        species: 'Human',
+        faction: 'Starfleet',
+      })
+
+      const res = await request(app)
+        .put(`/api/v1/trek_characters/${character.id}`)
+        .send({ faction: 'retired' });
+
+        expect(res.body).toEqual({ name:'Captain Picard', species: 'Human', faction: 'retired', id: '1' });
   })
 
 }); // <--- END PARENT CODE BLOCK
