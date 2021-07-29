@@ -83,5 +83,19 @@ describe('stapi routes', () => {
         expect(res.body).toEqual({ name:'Captain Picard', species: 'Human', faction: 'retired', id: '1' });
   })
 
+  it('deletes a character by ID', async () => {
+    const character = await TREK.insert({
+      name: 'General Martok',
+      species: 'Klingon', 
+      faction: 'Klingon Empire',
+    })
+
+    const res = await request(app).delete(`/api/v1/trek_characters/${character.id}`);
+
+    expect(res.body).toEqual({
+      message: `${character.name} has been removed.`
+    });
+  })
+
 }); // <--- END PARENT CODE BLOCK
 
