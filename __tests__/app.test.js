@@ -1,6 +1,7 @@
 import pool from '../lib/utils/pool.js';
 import setup from '../data/setup.js';
 import request from 'supertest';
+import apiRequest from 'superagent';
 import app from '../lib/app.js';
 import TREK from '../lib/models/stapi-model.js';
 
@@ -22,10 +23,12 @@ describe('stapi routes', () => {
   it('creates a character', async () => {
       const character = { name: 'Captian Kirk', species: 'Human', faction: 'Starfleet'};
       const res = await request(app).post('/api/v1/trek_characters').send(character);
+      //const fakeSeries = expect.any(String);
 
       expect(res.body).toEqual({
         id: '1',
         ...character,
+        //series: fakeSeries,
       })
   });
 
@@ -81,7 +84,7 @@ describe('stapi routes', () => {
         .send({ faction: 'retired' });
 
         expect(res.body).toEqual({ name:'Captain Picard', species: 'Human', faction: 'retired', id: '1' });
-  })
+  });
 
   it('deletes a character by ID', async () => {
     const character = await TREK.insert({
@@ -95,7 +98,18 @@ describe('stapi routes', () => {
     expect(res.body).toEqual({
       message: `${character.name} has been removed.`
     });
-  })
+  });
+
+  it('gets all series from API', async () => {
+    const season = expect.any(Array);
+
+    //const res = await apiRequest.get('http://stapi.co/api/v1/rest/season/search');
+    const res = await request(app).get('/api/v1/trek_characters/series');
+    const seasons = res.body.seasons;
+    
+    expect(seasons).toEqual(season);
+  });
+
 
 }); // <--- END PARENT CODE BLOCK
 
