@@ -4,6 +4,7 @@ CREATE TABLE trek_characters (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     name TEXT NOT NULL,
     species TEXT NOT NULL, 
-    faction TEXT NOT NULL
+    faction TEXT NOT NULL,
+    series TEXT
 
 );

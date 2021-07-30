@@ -1,9 +1,8 @@
 import pool from '../lib/utils/pool.js';
 import setup from '../data/setup.js';
 import request from 'supertest';
-import apiRequest from 'superagent';
 import app from '../lib/app.js';
-import TREK from '../lib/models/stapi-model.js';
+import trekService from '../lib/services/stapi-service.js';
 
 
 // CRUD
@@ -23,17 +22,17 @@ describe('stapi routes', () => {
   it('creates a character', async () => {
       const character = { name: 'Captian Kirk', species: 'Human', faction: 'Starfleet'};
       const res = await request(app).post('/api/v1/trek_characters').send(character);
-      //const fakeSeries = expect.any(String);
+      const fakeSeries = expect.any(String);
 
       expect(res.body).toEqual({
         id: '1',
         ...character,
-        //series: fakeSeries,
+        series: fakeSeries,
       })
   });
 
   it('gets character by id', async () => {
-    const character = await TREK.insert({
+    const character = await trekService.getTrekSeasons({
       name: 'Captain Kirk',
       species: 'Human',
       faction: 'Starfleet',
@@ -45,19 +44,19 @@ describe('stapi routes', () => {
   });
 
   it('gets all characters', async () => {
-    const kirk = await TREK.insert({
+    const kirk = await trekService.getTrekSeasons({
       name: 'Captian Kirk',
       species: "Human",
       faction: 'Starfleet',
     })
 
-    const shran = await TREK.insert({
+    const shran = await trekService.getTrekSeasons({
       name: 'Shran',
       species: 'Andorian',
       faction: 'Andorian Imprial Guard',
     })
 
-    const morn = await TREK.insert({
+    const morn = await trekService.getTrekSeasons({
       name: 'Morn',
       species: 'Lurian', 
       faction: 'smuggler',
@@ -73,21 +72,23 @@ describe('stapi routes', () => {
   });
 
   it('updates a character by ID', async () => {
-      const character = await TREK.insert({
+      const character = await trekService.getTrekSeasons({
         name: 'Captain Picard',
         species: 'Human',
         faction: 'Starfleet',
       })
 
+      const fakeSeries = expect.any(String);
+    
       const res = await request(app)
         .put(`/api/v1/trek_characters/${character.id}`)
         .send({ faction: 'retired' });
 
-        expect(res.body).toEqual({ name:'Captain Picard', species: 'Human', faction: 'retired', id: '1' });
+        expect(res.body).toEqual({ name: 'Captain Picard', species: 'Human', faction: 'retired', series: fakeSeries, id: '1' });
   });
 
   it('deletes a character by ID', async () => {
-    const character = await TREK.insert({
+    const character = await trekService.getTrekSeasons({
       name: 'General Martok',
       species: 'Klingon', 
       faction: 'Klingon Empire',
@@ -103,7 +104,6 @@ describe('stapi routes', () => {
   it('gets all series from API', async () => {
     const season = expect.any(Array);
 
-    //const res = await apiRequest.get('http://stapi.co/api/v1/rest/season/search');
     const res = await request(app).get('/api/v1/trek_characters/series');
     const seasons = res.body.seasons;
     
